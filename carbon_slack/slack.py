@@ -31,6 +31,8 @@ class SlackBase(object):
         return [channel for channel in result['channels']]
 
     def find_user(self, user_id):
+        """Lookup the user information for the given user id. Things like username will be available this way.
+        """
         result = self.slack.api_call('users.info', user=user_id, include_locale=False)
         return result.get('user')
 
@@ -69,7 +71,7 @@ class Receiver(object):
             for ts in messages_ts:
                 self.slack.api_call('chat.delete', channel=self.channel_id, ts=ts)
 
-class Sender(object):
+class Sender(SlackBase):
     def __init__(self, config):
         """Construct a new Slack channel message sender using the given configuration dict to specify a token and 
         channel name.

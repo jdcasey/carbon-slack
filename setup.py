@@ -38,16 +38,17 @@ setup(
     install_requires=[
       "slackclient",
       "click",
-      "PyYAML"
+      "ruamel.yaml"
     ],
     tests_require=test_deps,
     extras_require=extras,
     test_suite="tests",
     entry_points={
       'console_scripts': [
-        'telegram-recv = carbon_telegram:recv',
-        'telegram-relay = carbon_telegram:relay',
-        'telegram-send = carbon_telegram:send'
+        'carbon-slack-init = carbon_slack:init',
+        'carbon-slack-recv = carbon_slack:recv',
+        'carbon-slack-relay = carbon_slack:relay',
+        'carbon-slack-send = carbon_slack:send'
       ],
     }
 )
