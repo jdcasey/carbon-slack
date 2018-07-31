@@ -53,7 +53,7 @@ def load(config_file=None):
     data = {}
 
     with open(config_path) as f:
-        data = YAML.load(f)
+        data = YAML().load(f)
 
     return Config(data)
 
