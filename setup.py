@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 import sys
 
 with open('README.rst', 'r') as f:
-  long_description=r.read()
+  long_description=f.read()
 
 version='0.0.1'
 
