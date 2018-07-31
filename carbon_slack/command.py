@@ -15,24 +15,24 @@
 
 import sys
 import click
-import carbon_slack.config as c
-import carbon_slack.relay as relay
-import carbon_slack.slack as slack
+import carbon_slack.config
+import carbon_slack.relay
+import carbon_slack.slack
 import time
-import datetime as dt
+import datetime
 
 @click.command()
 def init():
     """Print a sample configuration file"""
-    c.serialized_sample()
+    carbon_slack.config.serialized_sample()
 
 @click.command()
 @click.option('--config', '-c', help='Alternative config YAML')
 def relay(config=None):
     """Start up a relay that reads metrics from plaintext Slack, and pushes to plaintext Carbon"""
-    cfg = c.load(config)
+    cfg = carbon_slack.config.load(config)
 
-    client = relay.Relay(cfg)
+    client = carbon_slack.relay.Relay(cfg)
     try:
         while True:
             client.run()
@@ -54,14 +54,14 @@ def recv(config=None):
 
     This is intended as a way to test Slack message sending.
     """
-    cfg = c.load(config)
+    cfg = carbon_slack.config.load(config)
 
-    recv = slack.Receiver(cfg)
+    recv = carbon_slack.slack.Receiver(cfg)
     messages = recv.get_messages()
     for m in messages:
         username = recv.find_user(m['user'])
         m['username'] = username
-        m['datestamp'] = dt.fromtimestamp(m['ts'])
+        m['datestamp'] = datetime.fromtimestamp(m['ts'])
         print "%(datestamp)s  %(username)s: %(text)s" % m
 
 @click.command()
@@ -74,8 +74,8 @@ def send(args, config=None):
     This could be useful for testing a Slack connection, or for calling from 
     a shell script or similar, simple service.
     """
-    cfg = c.load()
+    cfg = carbon_slack.config.load()
 
-    sender = slack.Sender(cfg)
+    sender = carbon_slack.slack.Sender(cfg)
     now = int(time.time())
     sender.send("%s %s %s" % (args.metric_name, args.metric_value, now))
