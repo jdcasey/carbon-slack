@@ -1,3 +1,18 @@
+# This file is part of Carbon-Slack.
+
+# Carbon-Slack is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Carbon-Slack is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Carbon-Slack.  If not, see <https://www.gnu.org/licenses/>.
+
 import time
 import socket
 from carbon_slack.slack import Receiver
@@ -29,7 +44,7 @@ class Relay(object):
         messages = self.recv.get_messages()
         if len(messages) < 1:
             print "No metrics to report"
-            return
+            return 0
 
         print "Sending stats..."
 
@@ -45,7 +60,9 @@ class Relay(object):
                 metrics.append("%s %s %s\n" % (parts[0], parts[1], parts[2]))
             acks.append(m['ts'])
 
-        self.sender.send_metrics(metrics)
-
         if len(acks) > 0:
+            self.sender.send_metrics(metrics)
             self.recv.ack_messages(acks)
+
+        return len(acks)
+

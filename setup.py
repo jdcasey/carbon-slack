@@ -5,18 +5,6 @@ import sys
 
 version='0.0.1'
 
-test_deps=[
-    "Mock",
-    "nose",
-    "responses",
-  ]
-
-extras = {
-  'test':test_deps,
-  'build':['tox'],
-  'ci':['coverage']
-}
-
 setup(
     zip_safe=True,
     name='carbon-slack',
@@ -40,8 +28,8 @@ setup(
       "click",
       "ruamel.yaml"
     ],
-    tests_require=test_deps,
-    extras_require=extras,
+    tests_require=[],
+    extras_require=[],
     test_suite="tests",
     entry_points={
       'console_scripts': [

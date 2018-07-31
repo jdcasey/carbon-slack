@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # This file is part of Carbon-Slack.
 
 # Carbon-Slack is free software: you can redistribute it and/or modify
@@ -13,11 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with Carbon-Slack.  If not, see <https://www.gnu.org/licenses/>.
 
-from carbon_slack.command import init, recv, relay, send
+import carbon_slack.config as conf
+from carbon_slack.slack import Sender
+import sys
 
-__all__ = [
-	'init',
-	'recv',
-    'relay',
-    'send'
-]
+config = {
+	conf.TOKEN: sys.argv[1],
+	conf.CHANNEL: sys.argv[2] if len(sys.argv) > 2 else None
+}
+
+parts = []
+while True:
+	send = Sender(config)
+
+	part = sys.stdin.readline().rstrip()
+	if part == '.':
+		send.send(parts)
+		parts = []
+	else:
+		parts.append(part)
+
+	
