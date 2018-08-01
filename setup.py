@@ -6,7 +6,7 @@ import sys
 with open('README.rst', 'r') as f:
   long_description=f.read()
 
-version='0.0.5'
+version='0.0.6'
 
 setup(
     zip_safe=True,

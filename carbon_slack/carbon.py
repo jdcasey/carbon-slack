@@ -37,7 +37,7 @@ class PlaintextSender(object):
             
             output = "\n".join(metrics)
             print( "Sending:\n%s" % output)
-            sock.send(output)
+            self.sock.send(output)
         except socket.error:
             raise SystemExit("Couldn't connect to %(server)s on port %(port)d, is carbon-cache.py running?" % 
                 { 'server':self.config.carbon_server, 'port':self.config.carbon_port })
