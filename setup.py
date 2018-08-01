@@ -6,7 +6,7 @@ import sys
 with open('README.rst', 'r') as f:
   long_description=f.read()
 
-version='0.0.4'
+version='0.0.5'
 
 setup(
     zip_safe=True,
@@ -35,10 +35,10 @@ setup(
     test_suite="tests",
     entry_points={
       'console_scripts': [
-        'carbon-slack-init = carbon_slack:init',
-        'carbon-slack-recv = carbon_slack:recv',
-        'carbon-slack-relay = carbon_slack:relay',
-        'carbon-slack-send = carbon_slack:send'
+        'carbon-slack-init = carbon_slack.command:init',
+        'carbon-slack-recv = carbon_slack.command:recv',
+        'carbon-slack-relay = carbon_slack.command:relay',
+        'carbon-slack-send = carbon_slack.command:send'
       ],
     }
 )

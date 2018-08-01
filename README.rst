@@ -30,21 +30,22 @@ Embedded in Your Configuration
 If you're using Carbon-Slack as a library, you can also load the necessary configuration elements from any ``dict`` using::
 
 	import carbon_slack.config as conf
-	config = {
+	config = conf.Config({
 		conf.TOKEN: 'here is my Slack API token',
 		conf.CHANNEL: 'metrics',
 		conf.CARBON_SERVER: '127.0.0.1',
 		conf.CARBON_PORT: 2023
-	}
+	})
 
 This is the same as::
 
-	config = {
+	import carbon_slack.config as conf
+	config = conf.Config({
 		'token': 'here is my Slack API token',
 		'channel': 'metrics',
 		'carbon-server': 127.0.0.1,
 		'carbon-port': 2023
-	}
+	})
 
 As you can see, you could initialize this directly from strings in a script, or by reading command line arguments, or from almost anywhere. You could even read in another YAML file that looked something like this::
 
@@ -63,9 +64,9 @@ Then, use something like the following to initialize your relay::
 	import yaml
 
 	with open('/path/to/app.yml') as f:
-		config = yaml.safe_load(f)
+		data = yaml.safe_load(f)
 
-	relay = Relay(config['relay'])
+	relay = Relay(conf.Config(data['relay']))
 
 Sending Manually
 ----------------

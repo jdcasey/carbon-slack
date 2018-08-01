@@ -1,15 +1,15 @@
 # This file is part of Carbon-Slack.
-
+#
 # Carbon-Slack is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
+#
 # Carbon-Slack is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with Carbon-Slack.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -31,15 +31,19 @@ def find_channel_id(slack, name):
 
     return None
 
-class SlackBase(object):
-    def __init__(self, config):
-        """Setup fields common to all Slack-oriented service objects"""
+class Receiver(object):
+    def __init__(self, config, last_message=0):
+        """Construct a new Slack channel message receiver using the given configuration dict and an
+        optional last-message timestamp (unix seconds).
+        """
         self.config = config
         self.slack = client.SlackClient(config.token)
 
         self.channel_id = find_channel_id(self.slack, config.channel)
         if self.channel_id is not None:
             self.slack.api_call('channels.join', channel=self.channel_id)
+
+        self.last_message = last_message
 
     def list_channels(self):
         """List the available Slack channels."""
@@ -51,14 +55,6 @@ class SlackBase(object):
         """
         result = self.slack.api_call('users.info', user=user_id, include_locale=False)
         return result.get('user')
-
-class Receiver(object):
-    def __init__(self, config, last_message=0):
-        """Construct a new Slack channel message receiver using the given configuration dict and an
-        optional last-message timestamp (unix seconds).
-        """
-        super(SlackBase,self).__init__()
-        self.last_message = last_message
 
     def get_last_seen_message(self):
         """Return the last-seen message after zero or more messages have been processed. This Receiver
@@ -87,12 +83,29 @@ class Receiver(object):
             for ts in messages_ts:
                 self.slack.api_call('chat.delete', channel=self.channel_id, ts=ts)
 
-class Sender(SlackBase):
+class Sender(object):
     def __init__(self, config):
         """Construct a new Slack channel message sender using the given configuration dict to specify a token and 
         channel name.
         """
-        super(SlackBase,self).__init__()
+        self.config = config
+        self.slack = client.SlackClient(config.token)
+
+        self.channel_id = find_channel_id(self.slack, config.channel)
+        if self.channel_id is not None:
+            self.slack.api_call('channels.join', channel=self.channel_id)
+
+
+    def list_channels(self):
+        """List the available Slack channels."""
+        result = self.slack.api_call("channels.list")
+        return [channel for channel in result['channels']]
+
+    def find_user(self, user_id):
+        """Lookup the user information for the given user id. Things like username will be available this way.
+        """
+        result = self.slack.api_call('users.info', user=user_id, include_locale=False)
+        return result.get('user')
 
     def send_metrics(self, metrics):
         """Serialize the given metrics dict (assumed to be key:value pairs without timestamps) to triplets in a 

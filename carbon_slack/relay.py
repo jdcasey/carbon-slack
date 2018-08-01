@@ -1,29 +1,29 @@
 # This file is part of Carbon-Slack.
-
+#
 # Carbon-Slack is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
+#
 # Carbon-Slack is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with Carbon-Slack.  If not, see <https://www.gnu.org/licenses/>.
 
 import time
 import socket
-from carbon_slack.slack import Receiver
-from carbon_slack.carbon import PlaintextSender
+import carbon_slack.slack
+import carbon_slack.carbon
 
 class Relay(object):
     def __init__(self, config, last_message=0):
         """Initialize the Relay using a config dict and an optional last-message timestamp (in unix seconds).
         """
-        self.recv = Receiver(config, last_message)
-        self.send = PlaintextSender(config)
+        self.recv = carbon_slack.slack.Receiver(config, last_message)
+        self.send = carbon_slack.carbon.PlaintextSender(config)
         self.config = config
 
     def close(self):
@@ -61,7 +61,7 @@ class Relay(object):
             acks.append(m['ts'])
 
         if len(acks) > 0:
-            self.sender.send_metrics(metrics)
+            self.send.send_metrics(metrics)
             self.recv.ack_messages(acks)
 
         return len(acks)
