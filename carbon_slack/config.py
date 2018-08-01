@@ -33,10 +33,10 @@ class Config(object):
         NOTE: This could be created from an external YAML (or dict) source, and doesn't have to be read from the 
         CONFIG_PATH (/etc/carbon-slack.yml by default).
         """
-        self.token = data[TOKEN]
-        self.channel = data[CHANNEL]
-        self.carbon_server = data[CARBON_SERVER]
-        self.carbon_port = data[CARBON_PORT]
+        self.token = data.get(TOKEN)
+        self.channel = data.get(CHANNEL)
+        self.carbon_server = data.get(CARBON_SERVER)
+        self.carbon_port = data.get(CARBON_PORT)
 
 def serialized_sample():
     """Serialize a sample configuration to STDOUT"""
