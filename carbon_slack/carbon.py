@@ -32,17 +32,20 @@ class PlaintextSender(object):
         multi-line payload. Then, send it over a new socket to the Carbon daemon.
         """
         self.sock = socket.socket()
+        conn_info = (self.config.carbon_server, self.config.carbon_port)
         try:
-            self.sock.connect( (self.config.carbon_server, self.config.carbon_port) )
+            print("Connecting to: %s:%d" % conn_info)
+            self.sock.connect(conn_info)
             
-            output = "\n".join(metrics)
-            print( "Sending:\n%s" % output)
-            self.sock.send(output)
+            for line in metrics:
+                print("Sending:\n%s\n" % line)
+                self.sock.send(line + "\n")
         except socket.error:
-            raise SystemExit("Couldn't connect to %(server)s on port %(port)d, is carbon-cache.py running?" % 
-                { 'server':self.config.carbon_server, 'port':self.config.carbon_port })
+            raise SystemExit("Couldn't connect to %s:%d, is carbon-cache.py running?" % conn_info)
 
         finally:
-            self.sock.close()
-            self.sock = None
+            if self.sock is not None:
+                print("Attempting to close socket.")
+                self.sock.close()
+                self.sock = None
 
